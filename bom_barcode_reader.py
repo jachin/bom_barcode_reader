@@ -3,7 +3,9 @@
 
 from datetime import datetime
 import sqlite3 as lite
-import sys
+
+import httplib
+import socket
 
 con = lite.connect('bom.db')
 
@@ -20,7 +22,7 @@ with con:
     )
 
 con.commit()
-con.close() 
+con.close()
 
 while True:
     barcode = raw_input("scann bar code: ")
@@ -28,8 +30,8 @@ while True:
     if barcode == '':
         continue
 
-    print datetime.now()
-    print barcode
+    print(datetime.now())
+    print(barcode)
 
     con = lite.connect('bom.db')
     with con:
@@ -37,5 +39,14 @@ while True:
         cur.execute("INSERT INTO upc (upc) VALUES( ? )", (barcode,))
 
     con.commit()
-    con.close() 
+    con.close()
 
+    # Small time out for repeated scans.
+    try:
+        conn = httplib.HTTPConnection("beverages.cw", timeout=1)
+        conn.request("GET", "/ping/?upc=barcode")
+        response = conn.getresponse()
+        conn.close()
+        print("Ping status {0}".format(response.status))
+    except (httplib.HTTPException, socket.error):
+        print("Unable to ping, no big deal.")
