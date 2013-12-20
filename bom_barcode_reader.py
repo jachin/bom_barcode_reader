@@ -44,7 +44,7 @@ while True:
     # Small time out for repeated scans.
     try:
         conn = httplib.HTTPConnection("beverages.cw", timeout=1)
-        conn.request("GET", "/ping/?upc=barcode")
+        conn.request("GET", "/ping/?upc={0}".format(barcode))
         response = conn.getresponse()
         conn.close()
         print("Ping status {0}".format(response.status))
