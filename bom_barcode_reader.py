@@ -16,6 +16,7 @@ with con:
         CREATE TABLE IF NOT EXISTS upc(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             upc TEXT,
+            location TEXT,
             `timestamp` timestamp DEFAULT CURRENT_TIMESTAMP
         )
         """
