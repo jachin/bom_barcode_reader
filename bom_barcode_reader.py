@@ -15,8 +15,8 @@ with con:
         """
         CREATE TABLE IF NOT EXISTS upc(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            upc TEXT,
-            location TEXT,
+            `upc` TEXT,
+            `location` TEXT,
             `timestamp` timestamp DEFAULT CURRENT_TIMESTAMP
         )
         """
@@ -37,7 +37,10 @@ while True:
     con = lite.connect('bom.db')
     with con:
         cur = con.cursor()
-        cur.execute("INSERT INTO upc (upc) VALUES( ? )", (barcode,))
+        cur.execute(
+            "INSERT INTO upc (upc, location) VALUES( ?, ? )",
+            ( barcode, socket.gethostname() )
+        )
 
     con.commit()
     con.close()
