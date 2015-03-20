@@ -6,6 +6,7 @@ import sqlite3 as lite
 
 import httplib
 import socket
+import uuid
 
 con = lite.connect('bom.db')
 
@@ -15,7 +16,9 @@ with con:
         """
         CREATE TABLE IF NOT EXISTS upc(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            upc TEXT,
+            `upc` TEXT,
+            `location` TEXT,
+            `uuid` TEXT,
             `timestamp` timestamp DEFAULT CURRENT_TIMESTAMP
         )
         """
@@ -36,7 +39,10 @@ while True:
     con = lite.connect('bom.db')
     with con:
         cur = con.cursor()
-        cur.execute("INSERT INTO upc (upc) VALUES( ? )", (barcode,))
+        cur.execute(
+            "INSERT INTO upc (upc, location, uuid) VALUES( ?, ?, ? )",
+            ( barcode, socket.gethostname(), str(uuid.uuid4()) )
+        )
 
     con.commit()
     con.close()
